@@ -1,7 +1,37 @@
 spring:
   application:
     name: authen-service
+
+  datasource:
+    url: ${AUTHEN_DB_URL:jdbc:postgresql://localhost:5432/authen_db}
+    username: ${AUTHEN_DB_USERNAME:postgres}
+    password: ${AUTHEN_DB_PASSWORD:1234}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
 server:
   port: 8082
-  servlet:
-    context-path: /api/auth/
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+  instance:
+    prefer-ip-address: true
+    logging:
+      level:
+        org.springframework.security: DEBUG
+
+security:
+  jwt:
+    secret: ${JWT_SECRET}
+  internal:
+    api-key: ${AUTH_SERVICE_API_KEY:}

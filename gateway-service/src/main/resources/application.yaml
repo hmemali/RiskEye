@@ -3,26 +3,91 @@ spring:
     name: gateway-service
   cloud:
     gateway:
-      routes:
-        - id: account-service
-          uri: lb://account-service
-          predicates:
-            - Path=/api/accounts/**
+      server:
+        webflux:
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOrigins:
+                  - ${CLIENT_ORIGIN:http://localhost:4200}
+                allowedMethods:
+                  - GET
+                  - POST
+                  - PUT
+                  - PATCH
+                  - DELETE
+                  - OPTIONS
+                allowedHeaders:
+                  - Authorization
+                  - Content-Type
+                  - X-Notification-Api-Key
+                  - Idempotency-Key
+                allowCredentials: false
+                maxAge: 3600
+          routes:
+            - id: account-service
+              uri: lb://account-service
+              predicates:
+                - Path=/api/accounts/**
 
-        - id: authen-service
-          uri: lb://authen-service
-          predicates:
-            - Path=/api/auth/**
+            - id: client-accounts-v1
+              uri: lb://account-service
+              predicates:
+                - Path=/api/v1/accounts/**,/api/v1/me/accounts/**
 
-        - id: eureka-service
-          uri: lb://eureka-service
-          predicates:
-            - Path=/eureka-dashboard/**
-          filters:
-            - StripPrefix=1
+            - id: authen-service
+              uri: lb://authen-service
+              predicates:
+                - Path=/api/auth/**
+
+            - id: transaction-service
+              uri: lb://transaction-service
+              predicates:
+                - Path=/api/transactions/**
+
+            - id: transaction-service-v1
+              uri: lb://transaction-service
+              predicates:
+                - Path=/api/v1/transactions/**,/api/v1/admin/**,/api/v1/me/transactions/**
+
+            - id: fraud-admin-api
+              uri: lb://transaction-service
+              predicates:
+                - Path=/api/admin/fraud-alerts/**,/api/admin/fraud-policy/**
+
+            - id: users-management
+              uri: lb://authen-service
+              predicates:
+                - Path=/api/users/**
+
+            - id: user-profile-v1
+              uri: lb://authen-service
+              predicates:
+                - Path=/api/v1/me/profile/**
+
+            - id: notification-service
+              uri: lb://notification-service
+              predicates:
+                - Path=/api/notifications/**
+
+            - id: notification-websocket
+              uri: lb:ws://notification-service
+              predicates:
+                - Path=/ws/alerts/**
+                - Header=Upgrade, websocket
+            - id: notification-websocket-sockjs
+              uri: lb://notification-service
+              predicates:
+                - Path=/ws/alerts/**
+            - id: eureka-service
+              uri: lb://eureka-service
+              predicates:
+                - Path=/eureka-dashboard/**
+              filters:
+                - StripPrefix=1
 
 server:
-  port: 8090
+  port: 8080
 
 eureka:
   client:

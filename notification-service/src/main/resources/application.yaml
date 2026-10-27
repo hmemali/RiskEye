@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: notification-service
+  mail:
+    host: ${MAIL_HOST:sandbox.smtp.mailtrap.io}
+    port: ${MAIL_PORT:2525}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_SMTP_AUTH:true}
+          starttls:
+            enable: true
+  datasource:
+    url: ${NOTIFICATION_DB_URL:jdbc:postgresql://localhost:5432/notification_db}
+    username: ${DB_USERNAME:pfe_user}
+    password: ${DB_PASSWORD:pfe_pass}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+
+server:
+  port: 8085
+
+notification:
+  mail:
+    from: ${MAIL_FROM:no-reply@riskeye.local}
+    admin-recipient: ${ALERT_ADMIN_EMAIL:}
+  api-key: ${NOTIFICATION_API_KEY:}
+
+client:
+  origin: ${CLIENT_ORIGIN:http://localhost:4200}
+
+security:
+  jwt:
+    secret: ${JWT_SECRET:ma_cle_de_dev_tres_longue_au_moins_32_caracteres}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true

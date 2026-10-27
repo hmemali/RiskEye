@@ -1,0 +1,13 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: pfe-postgres
+    environment:
+      POSTGRES_USER: pfe_user
+      POSTGRES_PASSWORD: pfe_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:
